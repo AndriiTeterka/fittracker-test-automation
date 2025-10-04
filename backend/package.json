@@ -1,0 +1,58 @@
+{
+  "name": "fittracker-backend",
+  "version": "1.0.0",
+  "description": "FitTracker backend configuration and Supabase utilities",
+  "private": true,
+  "scripts": {
+    "setup": "supabase init",
+    "start": "supabase start",
+    "stop": "supabase stop",
+    "status": "supabase status",
+    "db:reset": "supabase db reset",
+    "db:push": "supabase db push",
+    "db:pull": "supabase db pull",
+    "generate:types": "supabase gen types typescript --local > ../frontend/src/types/supabase.ts",
+    "migrate:up": "supabase migration up",
+    "migrate:new": "supabase migration new",
+    "seed": "supabase seed",
+    "functions:serve": "supabase functions serve",
+    "deploy": "supabase db push --include-seed",
+    "link": "supabase link --project-ref",
+    "setup:schema": "npm run setup:tables && npm run setup:rls && npm run setup:policies && npm run setup:sample-data",
+    "setup:tables": "supabase db reset --include-seed",
+    "setup:rls": "echo 'RLS setup included in schema migration'",
+    "setup:policies": "echo 'Policies setup included in schema migration'",
+    "setup:sample-data": "echo 'Sample data included in schema migration'",
+    "test:db": "echo 'Testing database connection...' && supabase status",
+    "cleanup:test-data": "psql $DATABASE_URL -c \"SELECT cleanup_test_data();\"",
+    "create:sample-workouts": "psql $DATABASE_URL -c \"SELECT create_sample_workouts_for_user('$USER_ID');\"",
+    "backup:local": "supabase db dump --local > backup.sql",
+    "restore:local": "supabase db reset && psql $DATABASE_URL < backup.sql"
+  },
+  "devDependencies": {
+    "supabase": "^1.110.1",
+    "@supabase/supabase-js": "^2.38.0",
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2",
+    "@types/node": "^20.8.0"
+  },
+  "dependencies": {
+    "postgres": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "supabase",
+    "postgresql",
+    "backend",
+    "fittracker",
+    "test-automation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndriiTeterka/fittracker-test-automation.git",
+    "directory": "backend"
+  }
+}
