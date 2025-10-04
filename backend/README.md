@@ -7,48 +7,94 @@ This backend uses Supabase as a Backend-as-a-Service (BaaS) platform providing:
 - Auto-generated REST API
 - Row Level Security (RLS)
 
+**Important**: This is a Supabase-based backend, not a traditional Node.js server. The `package.json` contains Supabase CLI tools and utilities for development.
+
 ## 🚀 Quick Setup
 
-### 1. Create Supabase Project
+### Option 1: Manual Setup (Recommended for beginners)
+
+#### 1. Create Supabase Project
 
 1. Go to [Supabase](https://app.supabase.com)
 2. Create a new project
-3. Wait for the database to be ready (2-3 minutes)
-4. Copy your project URL and anon key
+3. Choose project details:
+   - **Name**: FitTracker Test Automation
+   - **Database Password**: Generate a secure password (save it!)
+   - **Region**: Choose closest to your location
+4. Wait for the database to be ready (2-3 minutes)
 
-### 2. Environment Configuration
+#### 2. Get API Keys
 
-Create `.env.local` in the frontend directory:
+1. In your Supabase project dashboard, go to **Settings** > **API**
+2. Copy these values:
+   - **URL**: `https://your-project-id.supabase.co`
+   - **anon public**: Your public API key
+   - **service_role**: Your service role key (keep secret!)
+
+#### 3. Configure Frontend Environment
+
+Create `.env.local` in the **frontend** directory (not backend):
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+cd frontend
+cp .env.example .env.local
+```
+
+Edit `frontend/.env.local` with your Supabase values:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
-### 3. Database Schema Setup
+#### 4. Setup Database Schema
 
-Run the SQL scripts in your Supabase SQL Editor:
+In your Supabase dashboard, go to **SQL Editor** and execute these scripts **in order**:
 
-1. **Create Tables**: Execute `schema/01_create_tables.sql`
-2. **Enable RLS**: Execute `schema/02_enable_rls.sql`
-3. **Create Policies**: Execute `schema/03_create_policies.sql`
-4. **Insert Sample Data**: Execute `schema/04_sample_data.sql`
+1. **Create Tables**: Copy and run `backend/schema/01_create_tables.sql`
+2. **Enable RLS**: Copy and run `backend/schema/02_enable_rls.sql`
+3. **Create Policies**: Copy and run `backend/schema/03_create_policies.sql`
+4. **Insert Sample Data**: Copy and run `backend/schema/04_sample_data.sql`
 
-### 4. Verify Setup
+#### 5. Verify Setup
 
-Check in Supabase Dashboard:
-- Tables are created with proper columns
-- RLS is enabled on all tables
-- Policies are active
-- Sample data is inserted
+In Supabase Dashboard, check:
+- **Database > Tables**: You should see `users`, `workouts`, `exercises` tables
+- **Authentication > Users**: Should be empty initially
+- **API > Logs**: Should show no errors
+
+### Option 2: Using Supabase CLI (Advanced)
+
+**Prerequisites**: Install Supabase CLI first
+```bash
+npm install -g supabase
+```
+
+```bash
+cd backend
+npm install
+
+# Initialize local Supabase (optional for local development)
+supabase init
+
+# Start local Supabase (requires Docker)
+supabase start
+
+# Apply migrations
+supabase db reset
+
+# Generate TypeScript types
+npm run generate:types
+```
 
 ## 📊 Database Schema
 
-### Users Table
+### Users Table (extends Supabase auth.users)
 ```sql
-CREATE TABLE users (
+CREATE TABLE public.users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  auth_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   username VARCHAR(50) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   age INTEGER CHECK (age > 0 AND age < 120),
@@ -62,14 +108,15 @@ CREATE TABLE users (
 
 ### Workouts Table
 ```sql
-CREATE TABLE workouts (
+CREATE TABLE public.workouts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   duration_minutes INTEGER CHECK (duration_minutes > 0),
   calories_burned INTEGER CHECK (calories_burned >= 0),
   workout_date DATE NOT NULL DEFAULT CURRENT_DATE,
+  status VARCHAR(20) DEFAULT 'completed',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -77,14 +124,14 @@ CREATE TABLE workouts (
 
 ### Exercises Table
 ```sql
-CREATE TABLE exercises (
+CREATE TABLE public.exercises (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL UNIQUE,
   category VARCHAR(100) NOT NULL,
   muscle_group VARCHAR(100) NOT NULL,
   instructions TEXT NOT NULL,
-  difficulty_level VARCHAR(20) DEFAULT 'beginner' 
-    CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')),
+  difficulty_level VARCHAR(20) DEFAULT 'beginner',
+  equipment VARCHAR(100),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -92,125 +139,133 @@ CREATE TABLE exercises (
 
 ## 🔐 Row Level Security (RLS)
 
-### Users Policies
-- Users can read their own profile
-- Users can update their own profile
-- Admins can read all users
-- Only authenticated users can create accounts
-
-### Workouts Policies
-- Users can CRUD their own workouts
-- Admins can read all workouts
-
-### Exercises Policies
-- All authenticated users can read exercises
-- Only admins can create/update/delete exercises
+RLS is automatically configured to ensure:
+- **Users**: Can only access their own profile data
+- **Workouts**: Users can only see/modify their own workouts
+- **Exercises**: All authenticated users can read, only admins can modify
+- **Admin Access**: Admin users can access all data
 
 ## 📡 API Endpoints
 
-Supabase auto-generates REST API endpoints:
+Supabase automatically generates REST API endpoints at:
+`https://your-project-id.supabase.co/rest/v1/`
 
-### Authentication
+### Authentication Endpoints
 ```
-POST /auth/v1/signup
-POST /auth/v1/signin
-POST /auth/v1/signout
-GET  /auth/v1/user
+POST /auth/v1/signup     - Create new user
+POST /auth/v1/token      - Login user  
+POST /auth/v1/logout     - Logout user
+GET  /auth/v1/user       - Get current user
 ```
 
-### Users
+### Data Endpoints
 ```
+# Users
 GET    /rest/v1/users
-GET    /rest/v1/users?id=eq.{id}
-PATCH  /rest/v1/users?id=eq.{id}
-DELETE /rest/v1/users?id=eq.{id}
-```
+PATCH  /rest/v1/users?id=eq.{user_id}
 
-### Workouts
-```
+# Workouts
 GET    /rest/v1/workouts
 POST   /rest/v1/workouts
-GET    /rest/v1/workouts?id=eq.{id}
-PATCH  /rest/v1/workouts?id=eq.{id}
-DELETE /rest/v1/workouts?id=eq.{id}
-```
+PATCH  /rest/v1/workouts?id=eq.{workout_id}
+DELETE /rest/v1/workouts?id=eq.{workout_id}
 
-### Exercises
-```
+# Exercises
 GET    /rest/v1/exercises
-POST   /rest/v1/exercises
-GET    /rest/v1/exercises?id=eq.{id}
-PATCH  /rest/v1/exercises?id=eq.{id}
-DELETE /rest/v1/exercises?id=eq.{id}
+POST   /rest/v1/exercises  # Admin only
+PATCH  /rest/v1/exercises?id=eq.{exercise_id}  # Admin only
 ```
 
-## 🔍 Query Examples
+## 🧪 Test Data and Utilities
 
-### Filter and Search
-```javascript
-// Get workouts for specific user
-const { data } = await supabase
-  .from('workouts')
-  .select('*')
-  .eq('user_id', userId)
+### Pre-configured Test Users
+After running the sample data script, you can use these test accounts:
 
-// Search exercises by muscle group
-const { data } = await supabase
-  .from('exercises')
-  .select('*')
-  .ilike('muscle_group', '%chest%')
+- **Admin**: `admin@fittracker.com` / `Admin123!`
+- **User 1**: `john.doe@fittracker.com` / `User123!`
+- **User 2**: `jane.smith@fittracker.com` / `User123!`
 
-// Get workouts with pagination
-const { data } = await supabase
-  .from('workouts')
-  .select('*')
-  .range(0, 9) // First 10 records
-```
-
-## 🛠️ Testing Utilities
-
-### Test Data Reset
+### Testing Functions
 ```sql
--- Clear all data (for testing)
-DELETE FROM workouts;
-DELETE FROM exercises;
-DELETE FROM auth.users;
+-- Reset all test data
+SELECT cleanup_test_data();
+
+-- Create sample workouts for a user
+SELECT create_sample_workouts_for_user('user-uuid-here');
 ```
 
-### Create Test User
-```javascript
-const { data, error } = await supabase.auth.signUp({
-  email: 'test@fittracker.com',
-  password: 'Test123!',
-  options: {
-    data: {
-      username: 'testuser',
-      age: 25,
-      height_cm: 175,
-      weight_kg: 70
-    }
-  }
-})
+### API Testing Examples
+
+**Get user workouts:**
+```bash
+curl -X GET 'https://your-project.supabase.co/rest/v1/workouts' \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-## 📊 Monitoring
+**Create new workout:**
+```bash
+curl -X POST 'https://your-project.supabase.co/rest/v1/workouts' \
+  -H "apikey: YOUR_ANON_KEY" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Workout",
+    "duration_minutes": 30,
+    "calories_burned": 200
+  }'
+```
 
-- **Database**: Supabase Dashboard > Database
-- **Auth**: Supabase Dashboard > Authentication
-- **API Logs**: Supabase Dashboard > API
-- **Real-time**: Supabase Dashboard > Realtime
+## 📊 Monitoring and Debugging
 
-## 🚫 Common Issues
+### Supabase Dashboard
+- **Database > Tables**: View all tables and data
+- **Authentication > Users**: Manage user accounts
+- **API > Logs**: Monitor API requests and errors
+- **Settings > API**: Check CORS and key settings
 
-### Issue: RLS blocking queries
-**Solution**: Check policies are correctly set up
+### Common Debugging Commands
+```bash
+# Check database status (if using CLI)
+supabase status
 
-### Issue: CORS errors
-**Solution**: Add your domain to Supabase > Settings > API
+# View logs (if using CLI)
+supabase logs
 
-### Issue: Auth not persisting
-**Solution**: Check localStorage and session configuration
+# Reset database (if using CLI)
+supabase db reset
+```
+
+## 🚫 Troubleshooting
+
+### ❌ "npm install" not working?
+**Issue**: Backend folder doesn't behave like a normal Node.js project
+**Solution**: This is normal! Backend uses Supabase (cloud database). Only install frontend dependencies:
+```bash
+cd frontend
+npm install
+```
+
+### ❌ RLS blocking queries?
+**Solution**: Check that your JWT token is valid and policies are correctly set up
+
+### ❌ CORS errors?
+**Solution**: 
+1. Go to Supabase Dashboard > Settings > API
+2. Add your domain to CORS origins: `http://localhost:3000`
+
+### ❌ Database connection failed?
+**Solution**: 
+1. Check your `.env.local` file in frontend folder
+2. Verify Supabase URL and keys are correct
+3. Ensure your Supabase project is active
+
+### ❌ Sample data not appearing?
+**Solution**: 
+1. Check you ran all 4 SQL scripts in order
+2. Verify in Supabase Dashboard > Database > Tables
+3. Try running the sample data script again
 
 ---
 
-**Next**: Set up the [Frontend Application](../frontend/README.md)
+**Next Step**: [Set up the Frontend Application](../frontend/README.md)
