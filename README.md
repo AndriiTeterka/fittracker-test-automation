@@ -27,7 +27,7 @@ FitTracker/
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
-- Supabase account
+- Supabase account (free)
 - Git
 
 ### 1. Clone Repository
@@ -38,22 +38,39 @@ cd fittracker-test-automation
 
 ### 2. Backend Setup (Supabase)
 ```bash
+# The backend uses Supabase (cloud database)
+# No traditional server setup required!
+
+# Optional: Install Supabase CLI tools
 cd backend
-npm install
-# Follow backend/README.md for Supabase configuration
+npm install  # This installs CLI tools only
+
+# Main setup is done through Supabase web dashboard
+# Follow backend/README.md for detailed instructions
 ```
 
 ### 3. Frontend Setup
 ```bash
 cd frontend
 npm install
+
+# Configure environment (copy your Supabase keys)
+cp .env.example .env.local
+# Edit .env.local with your Supabase URL and keys
+
+# Start development server
 npm run dev
 ```
 
 ### 4. Access Application
 - **Web App**: http://localhost:3000
-- **API Docs**: http://localhost:3000/api-docs
-- **Supabase Dashboard**: https://app.supabase.com
+- **Supabase Dashboard**: https://app.supabase.com (for database management)
+- **API**: Auto-generated REST API through Supabase
+
+### 5. Quick Test
+Once running, you can login with test accounts:
+- **Admin**: admin@fittracker.com / Admin123!
+- **User**: john.doe@fittracker.com / User123!
 
 ## 🧪 Testing Features
 
@@ -81,16 +98,18 @@ npm run dev
 
 ## 📱 Test Data
 
-Pre-configured test users:
+Pre-configured test users (available after database setup):
 - **Admin**: admin@fittracker.com / Admin123!
 - **User1**: john.doe@fittracker.com / User123!
 - **User2**: jane.smith@fittracker.com / User123!
+- **Test**: test.user@fittracker.com / Test123!
 
 ## 📚 Documentation
 
+- [Backend Setup (Supabase)](./backend/README.md) - **Start here!**
+- [Frontend Setup](./frontend/README.md)
 - [API Documentation](./docs/api.md)
-- [Database Schema](./docs/database.md)
-- [Testing Guide](./docs/testing-guide.md)
+- [Testing Guide](./docs/testing-guide.md) - Playwright, REST Assured, Appium examples
 - [Deployment Guide](./docs/deployment.md)
 
 ## 🛠️ Tech Stack
@@ -100,45 +119,86 @@ Pre-configured test users:
 - Tailwind CSS
 - React Query for API calls
 - React Hook Form for form handling
+- Vite for fast development
 
 **Backend:**
 - Supabase (PostgreSQL + Auth + Storage)
-- REST API with automatic documentation
+- Auto-generated REST API
+- Row Level Security (RLS)
+- Real-time subscriptions
 
 **Testing Ready:**
 - Playwright test selectors
 - API endpoint documentation
 - Mobile-responsive design
 - Comprehensive error scenarios
+- Test data management utilities
 
 ## 🔄 Development Workflow
 
-1. **Feature Development**: Create feature branch
-2. **Testing**: Run automated tests
-3. **Code Review**: Submit pull request
-4. **Deployment**: Merge to main
+1. **Setup**: Follow backend and frontend README files
+2. **Development**: Make changes and test locally
+3. **Testing**: Run automated tests (when implemented)
+4. **Documentation**: Update relevant docs
 
 ## 📦 Available Scripts
 
+### Frontend Scripts
 ```bash
-# Development
+cd frontend
 npm run dev          # Start development server
 npm run build        # Build for production
 npm run test         # Run unit tests
+npm run lint         # Check code quality
+```
 
-# Testing
+### Backend Scripts (Optional)
+```bash
+cd backend
+npm run status       # Check Supabase connection
+npm run generate:types  # Generate TypeScript types
+npm run test:db      # Test database connection
+```
+
+### Testing Scripts (When implemented)
+```bash
 npm run test:playwright  # Run Playwright tests
 npm run test:api         # Run API tests
 npm run test:mobile      # Run mobile tests
 ```
 
+## 🚨 Important Notes
+
+- **Backend**: Uses Supabase (cloud database), not a traditional Node.js server
+- **Environment**: Copy `.env.example` to `.env.local` and add your Supabase keys
+- **Database**: Schema is set up through SQL scripts in Supabase dashboard
+- **Test Data**: Sample data is included for immediate testing
+
+## 🚫 Troubleshooting
+
+### "npm install doesn't work in backend"
+- This is normal! Backend uses Supabase (cloud service)
+- Only install frontend dependencies: `cd frontend && npm install`
+- Backend package.json contains CLI tools only
+
+### "Application won't start"
+1. Check you're in the frontend directory: `cd frontend`
+2. Verify environment file: `cat .env.local`
+3. Ensure Supabase project is active
+
+### "Can't login with test users"
+1. Run all SQL scripts in backend/schema/ folder
+2. Check Supabase > Authentication > Users
+3. Verify RLS policies are active
+
 ## 🤝 Contributing
 
 This is a learning project. Feel free to:
-- Add new features for testing
-- Improve test scenarios
+- Add new testing scenarios
+- Improve UI components
 - Enhance documentation
 - Report issues
+- Suggest features
 
 ## 📄 License
 
@@ -147,3 +207,5 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ---
 
 **Happy Testing! 🚀**
+
+**Need help?** Check the [Backend README](./backend/README.md) for detailed setup instructions.
