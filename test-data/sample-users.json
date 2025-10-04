@@ -1,0 +1,243 @@
+{
+  "testUsers": {
+    "admin": {
+      "email": "admin@fittracker.com",
+      "password": "Admin123!",
+      "profile": {
+        "username": "fittracker_admin",
+        "age": 35,
+        "height_cm": 180,
+        "weight_kg": 75,
+        "role": "admin"
+      },
+      "preferences": {
+        "preferred_units": "metric",
+        "fitness_goal": "general_fitness",
+        "activity_level": "active",
+        "theme": "light"
+      }
+    },
+    "regularUser1": {
+      "email": "john.doe@fittracker.com",
+      "password": "User123!",
+      "profile": {
+        "username": "johndoe",
+        "age": 28,
+        "height_cm": 175,
+        "weight_kg": 70,
+        "role": "user"
+      },
+      "preferences": {
+        "preferred_units": "metric",
+        "fitness_goal": "muscle_gain",
+        "activity_level": "moderate",
+        "theme": "light"
+      }
+    },
+    "regularUser2": {
+      "email": "jane.smith@fittracker.com",
+      "password": "User123!",
+      "profile": {
+        "username": "janesmith",
+        "age": 32,
+        "height_cm": 165,
+        "weight_kg": 60,
+        "role": "user"
+      },
+      "preferences": {
+        "preferred_units": "metric",
+        "fitness_goal": "weight_loss",
+        "activity_level": "active",
+        "theme": "dark"
+      }
+    },
+    "regularUser3": {
+      "email": "mike.wilson@fittracker.com",
+      "password": "User123!",
+      "profile": {
+        "username": "mikewilson",
+        "age": 24,
+        "height_cm": 185,
+        "weight_kg": 82,
+        "role": "user"
+      },
+      "preferences": {
+        "preferred_units": "imperial",
+        "fitness_goal": "strength",
+        "activity_level": "very_active",
+        "theme": "light"
+      }
+    },
+    "testUser": {
+      "email": "test.user@fittracker.com",
+      "password": "Test123!",
+      "profile": {
+        "username": "testuser",
+        "age": 25,
+        "height_cm": 170,
+        "weight_kg": 65,
+        "role": "user"
+      },
+      "preferences": {
+        "preferred_units": "metric",
+        "fitness_goal": "general_fitness",
+        "activity_level": "light",
+        "theme": "auto"
+      }
+    }
+  },
+  "sampleWorkouts": [
+    {
+      "name": "Morning Cardio",
+      "description": "Light cardio session to start the day",
+      "duration_minutes": 30,
+      "calories_burned": 200,
+      "status": "completed",
+      "exercises": [
+        {
+          "exercise_name": "Running",
+          "duration_seconds": 1200,
+          "notes": "Steady pace on treadmill"
+        },
+        {
+          "exercise_name": "High Knees",
+          "sets": 3,
+          "reps": 30,
+          "rest_seconds": 30
+        }
+      ]
+    },
+    {
+      "name": "Strength Training - Upper Body",
+      "description": "Focus on chest, shoulders, and arms",
+      "duration_minutes": 45,
+      "calories_burned": 300,
+      "status": "completed",
+      "exercises": [
+        {
+          "exercise_name": "Push-ups",
+          "sets": 3,
+          "reps": 15,
+          "weight_kg": 0,
+          "notes": "Perfect form maintained"
+        },
+        {
+          "exercise_name": "Bench Press",
+          "sets": 4,
+          "reps": 8,
+          "weight_kg": 70,
+          "notes": "Increased weight from last session"
+        },
+        {
+          "exercise_name": "Shoulder Press",
+          "sets": 3,
+          "reps": 12,
+          "weight_kg": 20,
+          "notes": "Good control throughout range"
+        }
+      ]
+    },
+    {
+      "name": "Leg Day",
+      "description": "Lower body strength and endurance",
+      "duration_minutes": 60,
+      "calories_burned": 450,
+      "status": "completed",
+      "exercises": [
+        {
+          "exercise_name": "Squats",
+          "sets": 4,
+          "reps": 12,
+          "weight_kg": 0,
+          "notes": "Bodyweight only, focus on depth"
+        },
+        {
+          "exercise_name": "Lunges",
+          "sets": 3,
+          "reps": 10,
+          "weight_kg": 0,
+          "notes": "Each leg, maintaining balance"
+        },
+        {
+          "exercise_name": "Calf Raises",
+          "sets": 3,
+          "reps": 20,
+          "weight_kg": 0,
+          "notes": "Slow and controlled movement"
+        }
+      ]
+    },
+    {
+      "name": "Full Body Circuit",
+      "description": "High intensity circuit training",
+      "duration_minutes": 40,
+      "calories_burned": 380,
+      "status": "planned",
+      "exercises": [
+        {
+          "exercise_name": "Burpees",
+          "sets": 3,
+          "reps": 10,
+          "notes": "Full range of motion"
+        },
+        {
+          "exercise_name": "Mountain Climbers",
+          "sets": 3,
+          "duration_seconds": 45,
+          "notes": "High knees, fast pace"
+        },
+        {
+          "exercise_name": "Plank",
+          "sets": 3,
+          "duration_seconds": 60,
+          "notes": "Hold steady position"
+        }
+      ]
+    }
+  ],
+  "testScenarios": {
+    "validationTests": {
+      "invalidEmails": [
+        "invalid-email",
+        "@domain.com",
+        "user@",
+        "user.domain",
+        "user@domain"
+      ],
+      "weakPasswords": [
+        "123",
+        "password",
+        "12345678",
+        "abcdefgh"
+      ],
+      "invalidWorkoutData": {
+        "emptyName": "",
+        "negativeDuration": -10,
+        "invalidCalories": "not-a-number",
+        "futureDateBeyondLimit": "2030-12-31"
+      }
+    },
+    "performanceTests": {
+      "largeDataSet": {
+        "workoutCount": 1000,
+        "exerciseCount": 500,
+        "userCount": 100
+      },
+      "concurrentUsers": 50,
+      "loadTestDuration": 300
+    },
+    "securityTests": {
+      "sqlInjectionAttempts": [
+        "'; DROP TABLE users; --",
+        "1' OR '1'='1",
+        "admin'--",
+        "' UNION SELECT * FROM users --"
+      ],
+      "xssAttempts": [
+        "<script>alert('xss')</script>",
+        "javascript:alert('xss')",
+        "<img src=x onerror=alert('xss')>"
+      ]
+    }
+  }
+}
