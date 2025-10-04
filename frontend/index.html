@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>FitTracker - Test Automation Learning Platform</title>
+    <meta name="title" content="FitTracker - Test Automation Learning Platform" />
+    <meta name="description" content="A comprehensive fitness tracking application designed for test automation engineers to practice with Playwright, REST Assured, and Appium." />
+    <meta name="keywords" content="fitness,tracker,test,automation,playwright,rest assured,appium,react,typescript" />
+    <meta name="author" content="FitTracker Team" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fittracker-test-automation.vercel.app/" />
+    <meta property="og:title" content="FitTracker - Test Automation Learning Platform" />
+    <meta property="og:description" content="A comprehensive fitness tracking application designed for test automation engineers to practice with Playwright, REST Assured, and Appium." />
+    <meta property="og:image" content="/og-image.png" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://fittracker-test-automation.vercel.app/" />
+    <meta property="twitter:title" content="FitTracker - Test Automation Learning Platform" />
+    <meta property="twitter:description" content="A comprehensive fitness tracking application designed for test automation engineers to practice with Playwright, REST Assured, and Appium." />
+    <meta property="twitter:image" content="/og-image.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    
+    <!-- Performance and Security -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Accessibility -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    
+    <!-- Test Automation Meta Tags -->
+    <meta name="test-framework" content="playwright,rest-assured,appium" />
+    <meta name="test-ready" content="true" />
+    <meta name="automation-friendly" content="true" />
+    
+    <!-- Application Info for Testing -->
+    <script>
+      window.__APP_INFO__ = {
+        name: 'FitTracker',
+        version: '1.0.0',
+        environment: 'development',
+        testMode: true,
+        features: {
+          authentication: true,
+          workouts: true,
+          exercises: true,
+          userManagement: true,
+          adminPanel: true
+        }
+      };
+    </script>
+    
+    <!-- Service Worker Registration (for PWA features) -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
+    <!-- Testing Utilities -->
+    <style>
+      /* Loading screen for better UX during tests */
+      #initial-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+      }
+      
+      #initial-loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      
+      .loader-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e5e7eb;
+        border-top: 3px solid #2563eb;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* High contrast mode support */
+      @media (prefers-contrast: high) {
+        :root {
+          --primary-color: #000000;
+          --background-color: #ffffff;
+          --text-color: #000000;
+        }
+      }
+      
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <!-- Initial Loading Screen -->
+    <div id="initial-loader" data-testid="initial-loader">
+      <div class="loader-spinner" data-testid="loader-spinner"></div>
+    </div>
+    
+    <!-- Main Application Container -->
+    <div id="root" data-testid="root-container"></div>
+    
+    <!-- No Script Fallback -->
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>FitTracker requires JavaScript to function properly. Please enable JavaScript in your browser and reload the page.</p>
+      </div>
+    </noscript>
+    
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white p-2 rounded" data-testid="skip-link">
+      Skip to main content
+    </a>
+    
+    <!-- Screen Reader Announcements -->
+    <div id="sr-announcements" class="sr-only" aria-live="polite" data-testid="sr-announcements"></div>
+    
+    <!-- Test Mode Indicator (Development Only) -->
+    <script>
+      // Add test mode indicators for development
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('test')) {
+        document.documentElement.setAttribute('data-test-mode', 'true');
+        console.log('🧪 Test mode enabled - FitTracker Test Automation Platform');
+        console.log('📊 Available test data:', window.__APP_INFO__);
+        
+        // Add test utilities to window for easy access during testing
+        window.__TEST_UTILS__ = {
+          getTestUsers: () => fetch('/test-data/sample-users.json').then(r => r.json()),
+          resetApp: () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            location.reload();
+          },
+          enableDebugMode: () => {
+            localStorage.setItem('debug', 'true');
+            location.reload();
+          }
+        };
+      }
+    </script>
+    
+    <!-- Hide initial loader when React mounts -->
+    <script>
+      // Remove loading screen when app is ready
+      window.addEventListener('DOMContentLoaded', function() {
+        const loader = document.getElementById('initial-loader');
+        if (loader) {
+          setTimeout(() => {
+            loader.classList.add('hidden');
+            setTimeout(() => loader.remove(), 300);
+          }, 1000);
+        }
+      });
+    </script>
+    
+    <!-- Main Application Script -->
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
